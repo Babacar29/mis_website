@@ -34,21 +34,9 @@ class MisDrawer extends StatelessWidget {
               children: [
                 _DrawerItem(icon: Icons.home, title: "Accueil", route: '/'),
                 _DrawerItem(icon: Icons.info, title: "À propos", route: '/about'),
-                _DrawerItem(icon: Icons.category, title: "Programmes", route: '/programs'),
+                _DrawerItem(icon: Icons.category, title: "Programmes & Activités", route: '/programs'),
                 _DrawerItem(icon: Icons.handshake, title: "Partenariats", route: '/partners'),
-                _DrawerItem(icon: Icons.mail, title: "Contact", route: '/contact'),
-                
-                const Divider(height: 30),
-                
-                // Lien Admin discret (Optionnel)
-                ListTile(
-                  leading: const Icon(Icons.admin_panel_settings, color: Colors.grey),
-                  title: const Text("Admin", style: TextStyle(color: Colors.grey)),
-                  onTap: () {
-                    Navigator.pop(context); // Ferme le menu
-                    context.go('/admin');
-                  },
-                ),
+                _DrawerItem(icon: Icons.mail, title: "Contact & FAQ", route: '/contact'),
               ],
             ),
           ),
