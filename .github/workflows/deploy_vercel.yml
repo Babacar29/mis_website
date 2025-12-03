@@ -24,6 +24,8 @@ jobs:
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             --dart-define=SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
 
+          cp vercel.json build/web/
+
       # 3. Déploiement sur Vercel
       # On envoie uniquement le dossier 'build/web' qui contient le site compilé
       - name: Deploy to Vercel
