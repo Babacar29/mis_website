@@ -3,9 +3,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'env.dart';
 import 'routes.dart';
 import 'theme/app_theme.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+
+  usePathUrlStrategy();
   
   await Supabase.initialize(
     url: Env.supabaseUrl,
