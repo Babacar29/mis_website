@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "MIS Website (Dev)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=SUPABASE_URL=https://fwhlckcuvlekbdxwhaft.supabase.co",
+                "--dart-define=SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aGxja2N1dmxla2JkeHdoYWZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2ODE2NDksImV4cCI6MjA4MDI1NzY0OX0.zylRSBC8tAMFC8o6P4uT2ygZp_AdmQtP8wCpnuiYB-8"
+            ]
+        }
+    ]
+}
