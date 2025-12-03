@@ -20,7 +20,7 @@ jobs:
       # On injecte les secrets GitHub dans la commande de build
       - name: Build Web App
         run: |
-          flutter build web --release --web-renderer html \
+          flutter build web --release \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             --dart-define=SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
 
