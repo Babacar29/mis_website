@@ -67,7 +67,20 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 20),
           ]
-        : null, // Sur mobile, le menu hamburger apparaît automatiquement
+        : [
+            // --- VERSION MOBILE ---
+            // On affiche juste l'icône Hamburger à droite
+            Builder(builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.menu, size: 30, color: AppTheme.primaryBlue),
+                onPressed: () {
+                  // Ouvre le menu latéral DROIT (EndDrawer)
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            }),
+            const SizedBox(width: 20),
+          ], // Sur mobile, le menu hamburger apparaît automatiquement
         automaticallyImplyLeading: false,
     );
   }

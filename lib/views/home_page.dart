@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/footer.dart';
+import '../widgets/mis_drawer.dart';
 import '../widgets/navbar.dart';
 import '../theme/app_theme.dart';
 import 'sections/home_overview.dart'; // <--- Nouvel import
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const NavBar(),
+      endDrawer: const MisDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../widgets/mis_drawer.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
 
@@ -11,6 +12,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const NavBar(),
+      endDrawer: const MisDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
