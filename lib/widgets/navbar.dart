@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../views/about_page.dart';
+import '../views/contact_page.dart';
 import '../views/donate_page.dart';
+import '../views/home_page.dart';
 import '../views/partners_page.dart';
 import '../views/programs_page.dart';
 
@@ -19,49 +22,36 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       centerTitle: false,
-      title: Row(
-        children: [
-          // Ici on mettra le Logo plus tard [cite: 24]
-          const Icon(Icons.church, color: AppTheme.primaryBlue, size: 30),
-          const SizedBox(width: 10),
-          Text(
-            "MIS",
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold, 
-              color: AppTheme.primaryBlue,
-              letterSpacing: 1.5
-            ),
-          ),
-        ],
+      title: Image.asset(
+        'assets/images/mis_logo_full.png',
+        height: 50,
       ),
       actions: isDesktop 
         ? [
-            _NavBarItem(title: "Accueil", onTap: () {}),
+            _NavBarItem(title: "Accueil", onTap: () => context.go('/')),
             _NavBarItem(
                 title: "À propos de la MIS", 
                 onTap: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const AboutPage()) 
-                  );
+                  context.go('/about');
                 }
               ),// 
             _NavBarItem(
               title: "Programmes & Activités", 
               onTap: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => const ProgramsPage())
-                );
+                context.go('/programs');
               }
             ),
             _NavBarItem(
               title: "Partenariats", 
               onTap: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => const PartnersPage())
-                );
+                context.go('/partners');
+              }
+            ),
+
+            _NavBarItem(
+              title: "Contact & FAQ", 
+              onTap: () {
+                context.go('/contact');
               }
             ),
             const SizedBox(width: 10),
@@ -78,6 +68,7 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: 20),
           ]
         : null, // Sur mobile, le menu hamburger apparaît automatiquement
+        automaticallyImplyLeading: false,
     );
   }
 }

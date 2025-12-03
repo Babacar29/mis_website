@@ -46,7 +46,7 @@ class DonatePage extends StatelessWidget {
                   SizedBox(
                     width: 600,
                     child: Text(
-                      "Chaque don contribue directement à l'implantation d'églises, à l'éducation des enfants et au développement des communautés au Sénégal.",
+                      "Votre soutien change des vies et contribue à l’expansion du Royaume de Dieu au Sénégal.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: .9),

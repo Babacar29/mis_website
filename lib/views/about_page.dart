@@ -14,7 +14,6 @@ class AboutPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. EN-TÊTE DE PAGE
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 60),

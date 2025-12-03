@@ -1,0 +1,36 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ] # Déclenche le déploiement quand tu pousses sur main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # 1. Installation de Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      
+      # 2. Construction du site (C'est ICI que la sécurité opère)
+      # On injecte les secrets GitHub dans la commande de build
+      - name: Build Web App
+        run: |
+          flutter build web --release --web-renderer html \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+
+      # 3. Déploiement sur Vercel
+      # On envoie uniquement le dossier 'build/web' qui contient le site compilé
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./build/web

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
+import 'donate_page.dart';
 
 class ProgramsPage extends StatelessWidget {
   const ProgramsPage({super.key});
@@ -46,7 +47,7 @@ class ProgramsPage extends StatelessWidget {
                       "Une approche holistique pour toucher les cœurs et transformer les conditions de vie.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: .8),
+                        color: Colors.white.withOpacity(0.8),
                         fontSize: 16,
                       ),
                     ),
@@ -67,7 +68,9 @@ class ProgramsPage extends StatelessWidget {
                 "Témoignages de vies transformées par l'Évangile.",
               ],
               icon: Icons.church,
-              isImageRight: true, // Image (ou icône) à droite
+              isImageRight: true,
+              // Image : Rassemblement communautaire / Village
+              imageUrl: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=800&auto=format&fit=crop",
             ),
 
             const Divider(indent: 100, endIndent: 100),
@@ -81,8 +84,10 @@ class ProgramsPage extends StatelessWidget {
                 "Santé : Campagnes médicales et prévention.",
                 "Éducation & Parrainage : Soutien scolaire pour les enfants démunis.",
               ],
-              icon: Icons.agriculture, // Icône représentative
-              isImageRight: false, // Image à gauche
+              icon: Icons.agriculture,
+              isImageRight: false,
+              // Image : Agriculture / Nature verdoyante
+              imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=800&auto=format&fit=crop",
             ),
 
             const Divider(indent: 100, endIndent: 100),
@@ -98,6 +103,8 @@ class ProgramsPage extends StatelessWidget {
               ],
               icon: Icons.school,
               isImageRight: true,
+              // Image : Enfants en classe / Éducation
+              imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800&auto=format&fit=crop",
             ),
 
             const SizedBox(height: 60),
@@ -120,7 +127,10 @@ class ProgramsPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Lien vers la page Faire un don (à créer)
+                      Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (context) => const DonatePage())
+                    );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.accentGold,
@@ -140,7 +150,7 @@ class ProgramsPage extends StatelessWidget {
   }
 }
 
-// --- WIDGET POUR UNE SECTION DE PROGRAMME ---
+// --- WIDGET MODIFIÉ POUR ACCEPTER UNE URL D'IMAGE ---
 
 class _ProgramSection extends StatelessWidget {
   final String title;
@@ -148,6 +158,7 @@ class _ProgramSection extends StatelessWidget {
   final List<String> details;
   final IconData icon;
   final bool isImageRight;
+  final String imageUrl; // Nouveau paramètre
 
   const _ProgramSection({
     required this.title,
@@ -155,14 +166,13 @@ class _ProgramSection extends StatelessWidget {
     required this.details,
     required this.icon,
     required this.isImageRight,
+    required this.imageUrl, // Requis maintenant
   });
 
   @override
   Widget build(BuildContext context) {
-    // Détection écran large vs mobile
     bool isMobile = MediaQuery.of(context).size.width < 800;
 
-    // Contenu texte
     Widget textContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,7 +196,7 @@ class _ProgramSection extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             height: 1.6,
-            color: AppTheme.textDark.withValues(alpha: .8),
+            color: AppTheme.textDark.withOpacity(0.8),
           ),
         ),
         const SizedBox(height: 20),
@@ -209,26 +219,26 @@ class _ProgramSection extends StatelessWidget {
       ],
     );
 
-    // Contenu visuel (Image placeholder)
+    // Contenu visuel mis à jour
     Widget imageContent = Container(
-      height: 300,
+      height: 350, // Légèrement plus grand pour bien voir le visuel
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
         image: DecorationImage(
-          // Utilisation d'une image générique pour l'instant
-          image: NetworkImage('https://source.unsplash.com/random/800x600/?${title.split(" ")[0]}'), 
+          image: NetworkImage(imageUrl), // Utilise l'URL spécifique
           fit: BoxFit.cover,
         ),
       ),
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          color: Colors.white.withValues(alpha: .8),
-          child: const Text("Visuel Terrain", style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-      ),
+      // J'ai retiré le texte "Visuel Terrain" au milieu car l'image parle d'elle-même
     );
 
     if (isMobile) {
@@ -248,14 +258,11 @@ class _ProgramSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
       child: Row(
         children: [
-          // Si image à gauche
           if (!isImageRight) Expanded(child: imageContent),
           if (!isImageRight) const SizedBox(width: 60),
 
-          // Texte (toujours au milieu)
           Expanded(child: textContent),
 
-          // Si image à droite
           if (isImageRight) const SizedBox(width: 60),
           if (isImageRight) Expanded(child: imageContent),
         ],

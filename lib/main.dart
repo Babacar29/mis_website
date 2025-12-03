@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'env.dart';
+import 'routes.dart';
 import 'theme/app_theme.dart';
-import 'views/home_page.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Supabase.initialize(
+    url: Env.supabaseUrl,
+    anonKey: Env.supabaseKey, 
+  );
   runApp(const MisWebsiteApp());
 }
 
@@ -11,11 +19,14 @@ class MisWebsiteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // On utilise MaterialApp.router au lieu de MaterialApp simple
+    return MaterialApp.router(
       title: 'Mission Inter-Sénégal',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme, // Utilisation du thème Option A
-      home: const HomePage(),
+      theme: AppTheme.lightTheme,
+      
+      // Configuration du Router
+      routerConfig: appRouter, 
     );
   }
 }

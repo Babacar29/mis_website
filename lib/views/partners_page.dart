@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
+import 'contact_page.dart';
 
 class PartnersPage extends StatelessWidget {
   const PartnersPage({super.key});
@@ -55,19 +57,53 @@ class PartnersPage extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-              child: Wrap(
-                spacing: 40,
-                runSpacing: 40,
-                alignment: WrapAlignment.center,
-                children: const [
-                  _PartnerLogo(name: "FES"), // Mentionné dans le cahier des charges
-                  _PartnerLogo(name: "Partenaire A"),
-                  _PartnerLogo(name: "Partenaire B"),
-                  _PartnerLogo(name: "Partenaire C"),
-                  _PartnerLogo(name: "Partenaire D"),
-                  _PartnerLogo(name: "Partenaire E"),
-                ],
-              ),
+              child: // Remplace le contenu statique par ceci :
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: Supabase.instance.client.from('partners').select(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text("Aucun partenaire pour le moment.");
+                    }
+
+                    final partners = snapshot.data!;
+                    
+                    return Wrap(
+                      spacing: 40,
+                      runSpacing: 40,
+                      alignment: WrapAlignment.center,
+                      children: partners.map((data) {
+                        return Container(
+                          width: 150,
+                          height: 100,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey.shade200),
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)
+                            ],
+                          ),
+                          child: data['logo_url'] != null
+                              ? Image.network(data['logo_url'], fit: BoxFit.contain)
+                              : Center(
+                                  child: Text(
+                                    data['name'],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
             ),
 
             const Divider(indent: 100, endIndent: 100),
@@ -134,7 +170,10 @@ class PartnersPage extends StatelessWidget {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
-
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => const ContactPage())
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
