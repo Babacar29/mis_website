@@ -48,7 +48,35 @@ class AppTheme {
         iconTheme: IconThemeData(color: primaryBlue),
         titleTextStyle: TextStyle(color: primaryBlue, fontWeight: FontWeight.bold, fontSize: 20),
       ),
+
+
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: _NoTransitionsBuilder(),
+          TargetPlatform.iOS: _NoTransitionsBuilder(),
+          TargetPlatform.macOS: _NoTransitionsBuilder(),
+          TargetPlatform.windows: _NoTransitionsBuilder(),
+          TargetPlatform.linux: _NoTransitionsBuilder(),
+        },
+      ),
     );
+  }
+}
+
+// Cette classe dit à Flutter : "Affiche la page directement, sans effet".
+class _NoTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    // On retourne simplement l'enfant (la page) sans l'envelopper dans une animation
+    return child;
   }
 }
 

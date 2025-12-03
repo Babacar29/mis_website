@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../models/site_content.dart';
 import '../../theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -40,30 +42,31 @@ class HomeOverview extends StatelessWidget {
             ],
           ),
         ),
-
         const SizedBox(height: 50),
-
-        // 2. CHIFFRES CLÉS (Statistiques)
         Container(
           width: double.infinity,
-          color: AppTheme.primaryBlue, // Fond bleu institutionnel
+          color: AppTheme.primaryBlue,
           padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-          child: Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            spacing: 40,
-            runSpacing: 40,
-            children: const [
-              _StatItem(count: "15+", label: "Années d'Actions"),
-              _StatItem(count: "50+", label: "Églises Implantées"),
-              _StatItem(count: "1000+", label: "Bénéficiaires"),
-              _StatItem(count: "10", label: "Partenaires"),
-            ],
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: Supabase.instance.client.from('statistics').select().order('id'),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: AppTheme.accentGold));
+              
+              final stats = snapshot.data!.map((e) => Statistic.fromJson(e)).toList();
+
+              return Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                spacing: 40,
+                runSpacing: 40,
+                children: stats.map((stat) => _StatItem(
+                  count: stat.count,
+                  label: stat.label
+                )).toList(),
+              );
+            },
           ),
         ),
-
         const SizedBox(height: 60),
-
-        // 3. PROJETS PHARES (Cartes)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -77,7 +80,6 @@ class HomeOverview extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              // Utilisation de Wrap pour que les cartes passent à la ligne sur mobile
               Wrap(
                 spacing: 30,
                 runSpacing: 30,

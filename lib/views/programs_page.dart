@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/site_content.dart';
 import '../theme/app_theme.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
@@ -7,6 +9,15 @@ import 'donate_page.dart';
 
 class ProgramsPage extends StatelessWidget {
   const ProgramsPage({super.key});
+
+  // Helper pour convertir la string de la DB en Icone Flutter
+  IconData _getIcon(String name) {
+    switch (name) {
+      case 'school': return Icons.school;
+      case 'agriculture': return Icons.agriculture;
+      default: return Icons.church;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,55 +69,40 @@ class ProgramsPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // 2. PILIER 1 : IMPLANTATION D'ÉGLISES
-            const _ProgramSection(
-              title: "Implantation d'Églises",
-              description: "Le cœur de notre mission est spirituel. Nous œuvrons pour l'implantation de communautés de foi vivantes dans des zones ciblées, apportant espoir et soutien spirituel.",
-              details: [
-                "Ciblage des zones prioritaires (villages et zones rurales).",
-                "Soutien aux pasteurs locaux et missionnaires.",
-                "Témoignages de vies transformées par l'Évangile.",
-              ],
-              icon: Icons.church,
-              isImageRight: true,
-              // Image : Rassemblement communautaire / Village
-              imageUrl: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=800&auto=format&fit=crop",
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: Supabase.instance.client.from('programs').select().order('id'),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
+                
+                final programs = snapshot.data!.map((e) => Program.fromJson(e)).toList();
+
+                if (programs.isEmpty) return const Padding(padding: EdgeInsets.all(40), child: Text("Aucun programme pour le moment."));
+
+                return Column(
+                  children: programs.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final program = entry.value;
+                    
+                    return Column(
+                      children: [
+                        _ProgramSection(
+                          title: program.title,
+                          description: program.description,
+                          details: program.details,
+                          icon: _getIcon(program.iconName),
+                          // Alterne l'image Droite/Gauche selon l'index (Pair/Impair)
+                          isImageRight: index % 2 == 0, 
+                          imageUrl: program.imageUrl ?? "https://via.placeholder.com/800x600", // Image par défaut
+                        ),
+                        // Ajoute un diviseur sauf après le dernier élément
+                        if (index < programs.length - 1) const Divider(indent: 100, endIndent: 100),
+                      ],
+                    );
+                  }).toList(),
+                );
+              },
             ),
-
-            const Divider(indent: 100, endIndent: 100),
-
-            // 3. PILIER 2 : DÉVELOPPEMENT COMMUNAUTAIRE
-            const _ProgramSection(
-              title: "Développement Communautaire",
-              description: "Nous croyons que l'amour du prochain se démontre par des actes. Nos projets visent l'autonomie et le bien-être des populations.",
-              details: [
-                "Agriculture : Projets maraîchers et formation agricole.",
-                "Santé : Campagnes médicales et prévention.",
-                "Éducation & Parrainage : Soutien scolaire pour les enfants démunis.",
-              ],
-              icon: Icons.agriculture,
-              isImageRight: false,
-              // Image : Agriculture / Nature verdoyante
-              imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=800&auto=format&fit=crop",
-            ),
-
-            const Divider(indent: 100, endIndent: 100),
-
-            // 4. PILIER 3 : FORMATION DES JEUNES
-            const _ProgramSection(
-              title: "Formation & Jeunesse",
-              description: "Investir dans la jeunesse, c'est investir dans l'avenir du Sénégal. Nous offrons des cadres pour grandir en compétences et en caractère.",
-              details: [
-                "Écoles et centres d'apprentissage.",
-                "Ateliers de formation professionnelle.",
-                "Mentorat et leadership chrétien.",
-              ],
-              icon: Icons.school,
-              isImageRight: true,
-              // Image : Enfants en classe / Éducation
-              imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800&auto=format&fit=crop",
-            ),
-
+           
             const SizedBox(height: 60),
             
             // APPEL À L'ACTION RAPIDE
