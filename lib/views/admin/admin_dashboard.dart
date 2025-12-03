@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +18,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // 3 Onglets
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Administration MIS"),
@@ -27,26 +28,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
               Tab(icon: Icon(Icons.handshake), text: "Partenaires"),
               Tab(icon: Icon(Icons.analytics), text: "Chiffres Clés"),
               Tab(icon: Icon(Icons.category), text: "Programmes"),
+              Tab(icon: Icon(Icons.person), text: "Mon Profil"),
             ],
             indicatorColor: AppTheme.accentGold,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await _supabase.auth.signOut();
-                if (mounted) context.go('/admin'); // Retour au login
-              },
-            )
-          ],
         ),
         body: const TabBarView(
           children: [
             _PartnersManager(),
             _StatsManager(),
             _ProgramsManager(),
+            _ProfileView(),
           ],
         ),
       ),
@@ -104,7 +98,22 @@ class _PartnersManagerState extends State<_PartnersManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: _addPartner, child: const Icon(Icons.add)),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: "logout_partners", // Tag unique pour éviter les conflits d'animation
+            onPressed: () async {
+              await _supabase.auth.signOut();
+              if (mounted) context.go('/admin');
+            },
+            backgroundColor: Colors.redAccent,
+            child: const Icon(Icons.logout, color: Colors.white),
+          ),
+          const SizedBox(height: 15),
+          FloatingActionButton(onPressed: _addPartner, child: const Icon(Icons.add)),
+        ],
+      ),
       body: FutureBuilder(
         future: _supabase.from('partners').select().order('id'),
         builder: (ctx, snap) {
@@ -188,9 +197,24 @@ class _StatsManagerState extends State<_StatsManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showStatDialog(), // Appel sans argument = Ajout
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: "logout_stats",
+            onPressed: () async {
+              await _supabase.auth.signOut();
+              if (mounted) context.go('/admin');
+            },
+            backgroundColor: Colors.redAccent,
+            child: const Icon(Icons.logout, color: Colors.white),
+          ),
+          const SizedBox(height: 15),
+          FloatingActionButton(
+            onPressed: () => _showStatDialog(), 
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: _supabase.from('statistics').select().order('id'),
@@ -345,9 +369,24 @@ class _ProgramsManagerState extends State<_ProgramsManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showProgramDialog(), // Ajout
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: .min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: "logout_programs",
+            onPressed: () async {
+              await _supabase.auth.signOut();
+              if (mounted) context.go('/admin');
+            },
+            backgroundColor: Colors.redAccent,
+            child: const Icon(Icons.logout, color: Colors.white),
+          ),
+          const SizedBox(height: 15),
+          FloatingActionButton(
+            onPressed: () => _showProgramDialog(), // Ajout
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: _supabase.from('programs').select().order('id'),
@@ -388,6 +427,92 @@ class _ProgramsManagerState extends State<_ProgramsManager> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+// --- ONGLET 4 : PROFIL ADMIN (NOUVEAU) ---
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Supabase.instance.client.auth.currentUser;
+    final email = user?.email ?? "Email inconnu";
+
+    return Center(
+      child: Container(
+        width: 400,
+        padding: const EdgeInsets.all(40),
+        margin: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Avatar
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlue.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person, size: 60, color: AppTheme.primaryBlue),
+            ),
+            const SizedBox(height: 30),
+            
+            // Infos
+            Text(
+              "ADMINISTRATEUR",
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              email,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textDark,
+              ),
+            ),
+            const SizedBox(height: 40),
+            const Divider(),
+            const SizedBox(height: 40),
+
+            // Bouton Déconnexion
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await Supabase.instance.client.auth.signOut();
+                  if (context.mounted) context.go('/admin'); // Retour page login
+                },
+                icon: const Icon(Icons.logout, color: Colors.white),
+                label: const Text("Se déconnecter"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent, // Rouge pour la déconnexion
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
